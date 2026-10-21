@@ -64,76 +64,55 @@ function buildMaskTexture(){
   const ctx=canvas.getContext("2d");
   ctx.clearRect(0,0,1024,1024);
 
-  const base=ctx.createRadialGradient(512,480,90,512,520,580);
-  base.addColorStop(0,"rgba(67,22,17,.88)");
-  base.addColorStop(.5,"rgba(34,12,10,.94)");
-  base.addColorStop(1,"rgba(5,5,5,.98)");
-  ctx.fillStyle=base; ctx.fillRect(0,0,1024,1024);
+  // Base uniforme: el FaceMesh se encarga de seguir la forma real del rostro.
+  const base=ctx.createRadialGradient(512,470,120,512,520,610);
+  base.addColorStop(0,"rgba(88,24,18,.46)");
+  base.addColorStop(.48,"rgba(38,12,11,.60)");
+  base.addColorStop(1,"rgba(5,5,6,.74)");
+  ctx.fillStyle=base;
+  ctx.fillRect(0,0,1024,1024);
 
-  // Frente de obsidiana.
-  ctx.fillStyle="rgba(7,7,8,.98)";
-  ctx.beginPath();
-  ctx.moveTo(145,250); ctx.quadraticCurveTo(340,160,512,228); ctx.quadraticCurveTo(684,160,879,250);
-  ctx.lineTo(812,362); ctx.quadraticCurveTo(655,312,512,342); ctx.quadraticCurveTo(369,312,212,362);
-  ctx.closePath(); ctx.fill();
-
-  // Ojos de guerrero.
-  ctx.strokeStyle="rgba(173,45,25,.98)";
-  ctx.lineWidth=30;
-  ctx.beginPath(); ctx.ellipse(348,448,132,78,-.12,0,Math.PI*2); ctx.stroke();
-  ctx.beginPath(); ctx.ellipse(676,448,132,78,.12,0,Math.PI*2); ctx.stroke();
-
-  // Nariz/centro.
-  ctx.fillStyle="rgba(14,14,15,.98)";
-  ctx.beginPath();
-  ctx.moveTo(512,360); ctx.lineTo(585,540); ctx.lineTo(512,620); ctx.lineTo(439,540); ctx.closePath(); ctx.fill();
-
-  // Mejillas / placas.
-  ctx.fillStyle="rgba(57,13,10,.97)";
-  ctx.beginPath(); ctx.moveTo(140,510); ctx.quadraticCurveTo(280,455,438,530); ctx.lineTo(395,705); ctx.quadraticCurveTo(265,730,160,645); ctx.closePath(); ctx.fill();
-  ctx.beginPath(); ctx.moveTo(884,510); ctx.quadraticCurveTo(744,455,586,530); ctx.lineTo(629,705); ctx.quadraticCurveTo(759,730,864,645); ctx.closePath(); ctx.fill();
-
-  // Mandíbula marcada.
-  ctx.fillStyle="rgba(8,8,9,.99)";
-  ctx.beginPath(); ctx.moveTo(215,684); ctx.quadraticCurveTo(350,755,512,742); ctx.quadraticCurveTo(674,755,809,684);
-  ctx.lineTo(745,870); ctx.quadraticCurveTo(630,965,512,978); ctx.quadraticCurveTo(394,965,279,870); ctx.closePath(); ctx.fill();
-
-  // Boca / energía interior.
-  ctx.fillStyle="rgba(126,26,18,.96)";
-  ctx.beginPath(); ctx.moveTo(355,762); ctx.quadraticCurveTo(512,825,669,762); ctx.lineTo(642,823); ctx.quadraticCurveTo(512,866,382,823); ctx.closePath(); ctx.fill();
-
-  // Símbolo central tipo piedra/sol.
-  ctx.strokeStyle="rgba(197,153,64,.98)"; ctx.lineWidth=22;
-  ctx.beginPath(); ctx.arc(512,235,67,0,Math.PI*2); ctx.stroke();
-  ctx.fillStyle="rgba(197,153,64,.98)";
-  ctx.beginPath(); ctx.moveTo(512,118); ctx.lineTo(450,240); ctx.lineTo(574,240); ctx.closePath(); ctx.fill();
-
-  // Líneas ceremoniales.
-  ctx.strokeStyle="rgba(197,153,64,.72)"; ctx.lineWidth=10;
-  [[190,500,165,700],[834,500,859,700],[260,585,350,548],[764,585,674,548]].forEach(([x1,y1,x2,y2])=>{
-    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  // Vetas de obsidiana suaves: decorativas, sin intentar dibujar ojos/nariz en UV.
+  ctx.strokeStyle="rgba(178,48,30,.28)";
+  ctx.lineWidth=8;
+  [
+    [250,210,390,380],
+    [774,210,634,380],
+    [210,565,370,660],
+    [814,565,654,660],
+    [330,790,445,845],
+    [694,790,579,845]
+  ].forEach(([x1,y1,x2,y2])=>{
+    ctx.beginPath();
+    ctx.moveTo(x1,y1);
+    ctx.lineTo(x2,y2);
+    ctx.stroke();
   });
 
-  // Recortes reales de ojos y boca.
-  ctx.save(); ctx.globalCompositeOperation="destination-out";
-  ctx.beginPath(); ctx.ellipse(348,448,120,64,-.12,0,Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(676,448,120,64,.12,0,Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(512,790,122,28,0,0,Math.PI*2); ctx.fill();
-  ctx.restore();
+  // Filetes dorados generales.
+  ctx.strokeStyle="rgba(205,166,88,.34)";
+  ctx.lineWidth=7;
+  ctx.beginPath();
+  ctx.arc(512,330,230,Math.PI*.15,Math.PI*.85);
+  ctx.stroke();
 
-  // Brillo piedra/obsidiana.
-  const gloss=ctx.createLinearGradient(0,100,0,900);
-  gloss.addColorStop(0,"rgba(255,255,255,.10)");
-  gloss.addColorStop(.45,"rgba(255,255,255,.015)");
+  ctx.beginPath();
+  ctx.arc(512,680,255,Math.PI*1.12,Math.PI*1.88);
+  ctx.stroke();
+
+  // Acabado tipo piedra pulida.
+  const gloss=ctx.createLinearGradient(0,120,0,900);
+  gloss.addColorStop(0,"rgba(255,255,255,.09)");
+  gloss.addColorStop(.42,"rgba(255,255,255,.012)");
   gloss.addColorStop(1,"rgba(255,255,255,0)");
-  ctx.fillStyle=gloss; ctx.fillRect(110,120,804,780);
+  ctx.fillStyle=gloss;
+  ctx.fillRect(0,0,1024,1024);
 
   const texture=new THREE.CanvasTexture(canvas);
   texture.colorSpace=THREE.SRGBColorSpace;
   texture.needsUpdate=true;
   return texture;
 }
-
 function setTracking(active){
   if(gestureState.tracking===active) return;
   gestureState.tracking=active;
@@ -209,10 +188,84 @@ async function startAR(){
 
   faceMeshAR=mindarThree.addFaceMesh();
   faceMeshAR.material=new THREE.MeshStandardMaterial({
-    map:buildMaskTexture(),transparent:true,opacity:.94,roughness:.38,metalness:.42,
+    map:buildMaskTexture(),transparent:true,opacity:.70,roughness:.38,metalness:.42,
     side:THREE.DoubleSide,emissive:new THREE.Color(0x120302),emissiveIntensity:.14,depthWrite:false
   });
   scene.add(faceMeshAR);
+
+  // Detalles colocados sobre landmarks reales del rostro.
+  const redGlow=new THREE.MeshStandardMaterial({
+    color:0x8d2118,
+    emissive:0x7a130d,
+    emissiveIntensity:.55,
+    metalness:.58,
+    roughness:.28,
+    side:THREE.DoubleSide
+  });
+
+  const goldGlow=new THREE.MeshStandardMaterial({
+    color:0xc49a48,
+    emissive:0x4d2d06,
+    emissiveIntensity:.34,
+    metalness:.86,
+    roughness:.22,
+    side:THREE.DoubleSide
+  });
+
+  // Marcos de ojos: anclados a cada ojo real.
+  const leftEyeAnchor=mindarThree.addAnchor(159);
+  const rightEyeAnchor=mindarThree.addAnchor(386);
+
+  const eyeGeometry=new THREE.RingGeometry(.048,.068,40);
+
+  const leftEyeOrnament=new THREE.Mesh(eyeGeometry,redGlow.clone());
+  leftEyeOrnament.scale.set(1.55,.72,1);
+  leftEyeOrnament.rotation.z=-.12;
+  leftEyeOrnament.position.set(0,0,.06);
+  leftEyeAnchor.group.add(leftEyeOrnament);
+
+  const rightEyeOrnament=new THREE.Mesh(eyeGeometry,redGlow.clone());
+  rightEyeOrnament.scale.set(1.55,.72,1);
+  rightEyeOrnament.rotation.z=.12;
+  rightEyeOrnament.position.set(0,0,.06);
+  rightEyeAnchor.group.add(rightEyeOrnament);
+
+  // Nariz / centro ritual.
+  const noseAnchor=mindarThree.addAnchor(1);
+  const noseShape=new THREE.Shape();
+  noseShape.moveTo(0,.075);
+  noseShape.lineTo(-.055,-.055);
+  noseShape.lineTo(.055,-.055);
+  noseShape.closePath();
+  const nosePiece=new THREE.Mesh(new THREE.ShapeGeometry(noseShape),goldGlow);
+  nosePiece.position.set(0,-.01,.065);
+  noseAnchor.group.add(nosePiece);
+
+  // Boca / mandíbula: pieza separada para poder reaccionar al gesto.
+  const mouthAnchor=mindarThree.addAnchor(13);
+  const mouthGroup=new THREE.Group();
+  mouthGroup.position.set(0,-.075,.055);
+
+  const jawPlate=new THREE.Mesh(
+    new THREE.BoxGeometry(.34,.09,.028),
+    new THREE.MeshStandardMaterial({
+      color:0x101011,
+      metalness:.72,
+      roughness:.3,
+      emissive:0x280604,
+      emissiveIntensity:.18
+    })
+  );
+  mouthGroup.add(jawPlate);
+
+  const mouthLine=new THREE.Mesh(
+    new THREE.BoxGeometry(.21,.018,.018),
+    redGlow.clone()
+  );
+  mouthLine.position.set(0,.022,.022);
+  mouthGroup.add(mouthLine);
+
+  mouthAnchor.group.add(mouthGroup);
 
   // Corona/penacho oscuro, no interactivo pero da silueta de guerrero.
   const foreheadAnchor=mindarThree.addAnchor(10);
@@ -245,6 +298,17 @@ async function startAR(){
     else if(gestureState.blink){ mat.emissive.setHex(0x7a220e); mat.emissiveIntensity=.72; }
     else if(gestureState.brow){ mat.emissive.setHex(0x6b4a16); mat.emissiveIntensity=.70; }
     else { mat.emissive.setHex(0x120302); mat.emissiveIntensity=.14; }
+
+    const eyeTarget=gestureState.blink?1.24:1;
+    leftEyeOrnament.scale.lerp(new THREE.Vector3(1.55*eyeTarget,.72*eyeTarget,1),.22);
+    rightEyeOrnament.scale.lerp(new THREE.Vector3(1.55*eyeTarget,.72*eyeTarget,1),.22);
+
+    const jawTargetY=gestureState.mouth?-.13:-.075;
+    mouthGroup.position.y+=(jawTargetY-mouthGroup.position.y)*.24;
+    {
+      const targetRot=gestureState.mouth?.18:0;
+      mouthGroup.rotation.x+=(targetRot-mouthGroup.rotation.x)*.18;
+    }
 
     const target=gestureState.brow?1.18:1;
     headdress.scale.lerp(new THREE.Vector3(target,target,target),.12);
