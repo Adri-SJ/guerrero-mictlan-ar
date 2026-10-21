@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <meta name="theme-color" content="#0c0908" />
+  <title>Guerrero del Mictlán AR</title>
+
+  <link rel="stylesheet" href="./css/styles.css?v=1" />
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+      "mindar-face-three": "https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-face-three.prod.js"
+    }
+  }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
+</head>
+<body>
+  <main id="app">
+    <section id="intro" class="intro-screen">
+      <div class="eclipse"></div>
+      <div class="intro-content">
+        <div class="glyph">MICTLÁN</div>
+        <p class="kicker">FILTRO FACIAL · DÍA DE MUERTOS</p>
+        <h1>GUERRERO<br>DEL MICTLÁN</h1>
+        <p class="description">
+          Una máscara ritual cubre tu rostro y despierta con tus gestos.
+        </p>
+        <button id="start-camera" class="start-button">
+          <span>Entrar al Mictlán</span>
+          <b>→</b>
+        </button>
+        <div class="instructions">
+          <span>ABRE LA BOCA</span>
+          <span>PARPADEA</span>
+          <span>LEVANTA CEJAS</span>
+        </div>
+        <p class="privacy">La cámara se utiliza únicamente durante la experiencia.</p>
+      </div>
+    </section>
+
+    <section id="ar-shell" class="ar-shell hidden">
+      <div id="scene-root"></div>
+
+      <div class="ar-top">
+        <div class="sigil">✦</div>
+        <div>
+          <small>GUERRERO DEL MICTLÁN</small>
+          <strong id="tracking-state">Buscando rostro…</strong>
+        </div>
+      </div>
+
+      <div id="guide" class="guide">
+        <div class="face-frame"></div>
+        <strong>Centra tu rostro</strong>
+        <span>Procura tener buena iluminación</span>
+      </div>
+
+      <div class="ar-bottom">
+        <div class="gesture-chip"><span>口</span><b id="mouth-state">Boca</b></div>
+        <div class="gesture-chip"><span>目</span><b id="blink-state">Ojos</b></div>
+        <div class="gesture-chip"><span>眉</span><b id="brow-state">Cejas</b></div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="./js/app.js?v=1"></script>
+</body>
+</html>
