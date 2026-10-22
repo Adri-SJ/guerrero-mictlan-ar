@@ -167,146 +167,128 @@ function buildMaskTexture() {
   const canvas = document.createElement("canvas");
   canvas.width = 1024;
   canvas.height = 1024;
-
   const ctx = canvas.getContext("2d");
   ctx.clearRect(0, 0, 1024, 1024);
 
-  // MISMA distribución UV que ya funciona en Samurai.
-  // Solo cambia la estética a Guerrero del Mictlán.
-  const base = ctx.createRadialGradient(512, 470, 90, 512, 520, 570);
-  base.addColorStop(0, "rgba(78,20,15,0.90)");
-  base.addColorStop(0.48, "rgba(35,8,9,0.92)");
-  base.addColorStop(1, "rgba(7,7,8,0.96)");
+  const base = ctx.createRadialGradient(512, 470, 120, 512, 520, 600);
+  base.addColorStop(0, "rgba(244,236,214,0.96)");
+  base.addColorStop(0.68, "rgba(229,216,190,0.94)");
+  base.addColorStop(1, "rgba(181,163,137,0.86)");
   ctx.fillStyle = base;
   ctx.fillRect(0, 0, 1024, 1024);
 
-  // Frente oscura.
-  ctx.fillStyle = "rgba(7,7,8,0.97)";
+  const edge = ctx.createRadialGradient(512, 500, 280, 512, 520, 620);
+  edge.addColorStop(0, "rgba(0,0,0,0)");
+  edge.addColorStop(0.78, "rgba(56,39,26,0.05)");
+  edge.addColorStop(1, "rgba(40,26,17,0.22)");
+  ctx.fillStyle = edge;
+  ctx.fillRect(0, 0, 1024, 1024);
+
+  ctx.fillStyle = "rgba(20,18,18,0.96)";
   ctx.beginPath();
-  ctx.moveTo(170, 245);
-  ctx.quadraticCurveTo(340, 175, 512, 235);
-  ctx.quadraticCurveTo(684, 175, 854, 245);
-  ctx.lineTo(810, 350);
-  ctx.quadraticCurveTo(650, 305, 512, 335);
-  ctx.quadraticCurveTo(374, 305, 214, 350);
-  ctx.closePath();
+  ctx.ellipse(350, 445, 128, 83, -0.10, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(674, 445, 128, 83, 0.10, 0, Math.PI * 2);
   ctx.fill();
 
-  // Detalles rojo profundo.
-  ctx.strokeStyle = "rgba(140,35,24,0.96)";
-  ctx.lineWidth = 18;
-  ctx.beginPath();
-  ctx.moveTo(205, 340);
-  ctx.quadraticCurveTo(360, 300, 470, 342);
-  ctx.stroke();
+  function flowerEye(cx, cy, rotation = 0) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rotation);
+    for (let i = 0; i < 12; i++) {
+      ctx.save();
+      ctx.rotate((Math.PI * 2 * i) / 12);
+      ctx.fillStyle = i % 2 === 0 ? "rgba(236,121,24,0.98)" : "rgba(246,158,35,0.98)";
+      ctx.beginPath();
+      ctx.ellipse(0, -112, 26, 56, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    ctx.strokeStyle = "rgba(144,42,31,0.96)";
+    ctx.lineWidth = 22;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 128, 82, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
 
-  ctx.beginPath();
-  ctx.moveTo(819, 340);
-  ctx.quadraticCurveTo(664, 300, 554, 342);
-  ctx.stroke();
+  flowerEye(350, 445, -0.10);
+  flowerEye(674, 445, 0.10);
 
-  // Centro/nariz.
-  ctx.fillStyle = "rgba(14,14,15,0.98)";
-  ctx.beginPath();
-  ctx.moveTo(512, 355);
-  ctx.lineTo(578, 535);
-  ctx.lineTo(512, 610);
-  ctx.lineTo(446, 535);
-  ctx.closePath();
-  ctx.fill();
-
-  // Pómulos.
-  ctx.fillStyle = "rgba(50,12,11,0.97)";
-  ctx.beginPath();
-  ctx.moveTo(165, 500);
-  ctx.quadraticCurveTo(280, 455, 435, 520);
-  ctx.lineTo(395, 700);
-  ctx.quadraticCurveTo(285, 725, 175, 645);
-  ctx.closePath();
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.moveTo(859, 500);
-  ctx.quadraticCurveTo(744, 455, 589, 520);
-  ctx.lineTo(629, 700);
-  ctx.quadraticCurveTo(739, 725, 849, 645);
-  ctx.closePath();
-  ctx.fill();
-
-  // Mandíbula.
-  ctx.fillStyle = "rgba(8,8,9,0.98)";
-  ctx.beginPath();
-  ctx.moveTo(230, 680);
-  ctx.quadraticCurveTo(340, 755, 512, 742);
-  ctx.quadraticCurveTo(684, 755, 794, 680);
-  ctx.lineTo(742, 865);
-  ctx.quadraticCurveTo(630, 955, 512, 970);
-  ctx.quadraticCurveTo(394, 955, 282, 865);
-  ctx.closePath();
-  ctx.fill();
-
-  // Boca.
-  ctx.fillStyle = "rgba(126,30,21,0.96)";
-  ctx.beginPath();
-  ctx.moveTo(365, 760);
-  ctx.quadraticCurveTo(512, 815, 659, 760);
-  ctx.lineTo(635, 815);
-  ctx.quadraticCurveTo(512, 855, 389, 815);
-  ctx.closePath();
-  ctx.fill();
-
-  // Símbolo frontal dorado.
-  ctx.strokeStyle = "rgba(194,151,66,0.98)";
-  ctx.lineWidth = 22;
-  ctx.beginPath();
-  ctx.arc(512, 235, 64, 0, Math.PI * 2);
-  ctx.stroke();
-
-  ctx.fillStyle = "rgba(194,151,66,0.98)";
-  ctx.beginPath();
-  ctx.moveTo(512, 120);
-  ctx.lineTo(452, 240);
-  ctx.lineTo(572, 240);
-  ctx.closePath();
-  ctx.fill();
-
-  // OJOS y boca recortados exactamente como en la versión Samurai funcional.
   ctx.save();
   ctx.globalCompositeOperation = "destination-out";
-
   ctx.beginPath();
-  ctx.ellipse(350, 445, 118, 66, -0.12, 0, Math.PI * 2);
+  ctx.ellipse(350, 445, 92, 50, -0.10, 0, Math.PI * 2);
   ctx.fill();
-
   ctx.beginPath();
-  ctx.ellipse(674, 445, 118, 66, 0.12, 0, Math.PI * 2);
+  ctx.ellipse(674, 445, 92, 50, 0.10, 0, Math.PI * 2);
   ctx.fill();
-
-  ctx.beginPath();
-  ctx.ellipse(512, 786, 118, 28, 0, 0, Math.PI * 2);
-  ctx.fill();
-
   ctx.restore();
 
-  // Bordes rojos de ojos.
-  ctx.strokeStyle = "rgba(177,45,31,0.98)";
-  ctx.lineWidth = 28;
-
+  ctx.fillStyle = "rgba(23,21,21,0.98)";
   ctx.beginPath();
-  ctx.ellipse(350, 445, 128, 76, -0.12, 0, Math.PI * 2);
+  ctx.moveTo(512, 545);
+  ctx.quadraticCurveTo(465, 595, 488, 650);
+  ctx.lineTo(512, 625);
+  ctx.lineTo(536, 650);
+  ctx.quadraticCurveTo(559, 595, 512, 545);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.strokeStyle = "rgba(75,63,49,0.92)";
+  ctx.lineWidth = 12;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.moveTo(512, 210);
+  ctx.quadraticCurveTo(430, 250, 455, 320);
+  ctx.quadraticCurveTo(486, 360, 512, 320);
+  ctx.quadraticCurveTo(538, 360, 569, 320);
+  ctx.quadraticCurveTo(594, 250, 512, 210);
   ctx.stroke();
 
+  ctx.fillStyle = "rgba(212,83,63,0.96)";
   ctx.beginPath();
-  ctx.ellipse(674, 445, 128, 76, 0.12, 0, Math.PI * 2);
+  ctx.moveTo(512, 242);
+  ctx.quadraticCurveTo(477, 290, 512, 330);
+  ctx.quadraticCurveTo(547, 290, 512, 242);
+  ctx.fill();
+
+  ctx.fillStyle = "rgba(67,126,82,0.92)";
+  [[420,340],[604,340],[270,610],[754,610]].forEach(([x,y])=>{
+    ctx.beginPath();
+    ctx.ellipse(x,y,15,34,0.6,0,Math.PI*2);
+    ctx.fill();
+  });
+
+  ctx.fillStyle = "rgba(205,76,116,0.92)";
+  [[455,365],[569,365],[315,665],[709,665]].forEach(([x,y])=>{
+    ctx.beginPath();
+    ctx.arc(x,y,15,0,Math.PI*2);
+    ctx.fill();
+  });
+
+  ctx.strokeStyle = "rgba(38,34,32,0.96)";
+  ctx.lineWidth = 12;
+  ctx.beginPath();
+  ctx.moveTo(340, 748);
+  ctx.quadraticCurveTo(512, 805, 684, 748);
   ctx.stroke();
 
-  // Acabado obsidiana.
-  const gloss = ctx.createLinearGradient(0, 150, 0, 820);
-  gloss.addColorStop(0, "rgba(255,255,255,0.09)");
-  gloss.addColorStop(0.45, "rgba(255,255,255,0.012)");
+  ctx.lineWidth = 9;
+  [392,432,472,512,552,592,632].forEach((x) => {
+    ctx.beginPath();
+    ctx.moveTo(x, 735);
+    ctx.lineTo(x, 805);
+    ctx.stroke();
+  });
+
+  const gloss = ctx.createLinearGradient(0, 120, 0, 880);
+  gloss.addColorStop(0, "rgba(255,255,255,0.12)");
+  gloss.addColorStop(0.5, "rgba(255,255,255,0.02)");
   gloss.addColorStop(1, "rgba(255,255,255,0)");
   ctx.fillStyle = gloss;
-  ctx.fillRect(120, 130, 784, 760);
+  ctx.fillRect(100, 120, 824, 760);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
@@ -480,6 +462,41 @@ async function startAR() {
 
   scene.add(faceMeshAR);
 
+  const foreheadAnchor = mindarThree.addAnchor(10);
+  const flowerGroup = new THREE.Group();
+  flowerGroup.position.set(0, 0.13, 0.10);
+
+  const petalMat = new THREE.MeshStandardMaterial({
+    color: 0xf09a22,
+    emissive: 0x6b2d06,
+    emissiveIntensity: 0.22,
+    roughness: 0.65,
+    side: THREE.DoubleSide
+  });
+
+  for (let i = 0; i < 10; i++) {
+    const petal = new THREE.Mesh(new THREE.CircleGeometry(0.035, 20), petalMat);
+    const a = (Math.PI * 2 * i) / 10;
+    petal.position.set(Math.cos(a) * 0.07, Math.sin(a) * 0.07, 0);
+    petal.scale.set(1.0, 1.55, 1);
+    petal.rotation.z = a + Math.PI / 2;
+    flowerGroup.add(petal);
+  }
+
+  const flowerCenter = new THREE.Mesh(
+    new THREE.CircleGeometry(0.035, 24),
+    new THREE.MeshStandardMaterial({
+      color: 0x8d2e24,
+      emissive: 0x4a120e,
+      emissiveIntensity: 0.18,
+      roughness: 0.55,
+      side: THREE.DoubleSide
+    })
+  );
+  flowerCenter.position.z = 0.005;
+  flowerGroup.add(flowerCenter);
+  foreheadAnchor.group.add(flowerGroup);
+
   await mindarThree.start();
 
   renderer.setAnimationLoop((time) => {
@@ -487,19 +504,22 @@ async function startAR() {
       const mat = faceMeshAR.material;
 
       if (gestureState.mouth) {
-        mat.emissive.setHex(0x381006);
-        mat.emissiveIntensity = 0.58;
+        mat.emissive.setHex(0x7a2d0c);
+        mat.emissiveIntensity = 0.50;
       } else if (gestureState.blink) {
-        mat.emissive.setHex(0x5a0505);
-        mat.emissiveIntensity = 0.85;
+        mat.emissive.setHex(0xb35a12);
+        mat.emissiveIntensity = 0.66;
       } else if (gestureState.brow) {
-        mat.emissive.setHex(0x3a2608);
-        mat.emissiveIntensity = 0.7;
+        mat.emissive.setHex(0x7d4f14);
+        mat.emissiveIntensity = 0.54;
       } else {
-        mat.emissive.setHex(0x170606);
-        mat.emissiveIntensity = 0.18;
+        mat.emissive.setHex(0x24170d);
+        mat.emissiveIntensity = 0.10;
       }
     }
+
+    const flowerTarget = gestureState.brow ? 1.22 : 1;
+    flowerGroup.scale.lerp(new THREE.Vector3(flowerTarget, flowerTarget, flowerTarget), 0.14);
 
     renderer.render(scene, camera);
   });
