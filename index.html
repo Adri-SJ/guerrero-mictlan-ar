@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
-  <meta name="theme-color" content="#0c0908" />
-  <title>Guerrero del Mictlán AR</title>
+  <meta name="theme-color" content="#120915" />
+  <title>Calavera de Cempasúchil AR</title>
 
-  <link rel="stylesheet" href="./css/styles.css?v=2" />
+  <link rel="stylesheet" href="./css/styles.css?v=3" />
 
   <script type="importmap">
   {
@@ -23,24 +23,49 @@
 <body>
   <main id="app">
     <section id="intro" class="intro-screen">
-      <div class="eclipse"></div>
+      <div class="petal-field" aria-hidden="true">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+
+      <div class="altar-glow" aria-hidden="true"></div>
+
       <div class="intro-content">
-        <div class="glyph">MICTLÁN</div>
-        <p class="kicker">FILTRO FACIAL · DÍA DE MUERTOS</p>
-        <h1>CALAVERA<br>DE CEMPASÚCHIL</h1>
-        <p class="description">
-          Una calavera inspirada en Día de Muertos se adapta a tu rostro y reacciona con tus gestos.
-        </p>
-        <button id="start-camera" class="start-button">
-          <span>Activar calavera</span>
-          <b>→</b>
-        </button>
-        <div class="instructions">
-          <span>ABRE LA BOCA</span>
-          <span>PARPADEA</span>
-          <span>LEVANTA CEJAS</span>
+        <div class="marigold-mark">
+          <span>✦</span>
+          <b>CEMPASÚCHIL</b>
+          <span>✦</span>
         </div>
-        <p class="privacy">La cámara se utiliza únicamente durante la experiencia.</p>
+
+        <p class="kicker">EXPERIENCIA DE REALIDAD AUMENTADA</p>
+
+        <h1>
+          CALAVERA
+          <em>de Cempasúchil</em>
+        </h1>
+
+        <div class="ornament">
+          <span></span>
+          <b>✹</b>
+          <span></span>
+        </div>
+
+        <p class="description">
+          Una máscara inspirada en Día de Muertos florece sobre tu rostro
+          y responde a tus gestos.
+        </p>
+
+        <div class="gesture-preview">
+          <div><span>口</span><small>ABRE LA BOCA</small></div>
+          <div><span>目</span><small>PARPADEA</small></div>
+          <div><span>眉</span><small>LEVANTA CEJAS</small></div>
+        </div>
+
+        <button id="start-camera" class="start-button">
+          <span>Entrar a la experiencia</span>
+          <b>✦</b>
+        </button>
+
+        <p class="privacy">La cámara solo se utiliza durante la experiencia AR.</p>
       </div>
     </section>
 
@@ -48,7 +73,7 @@
       <div id="scene-root"></div>
 
       <div class="ar-top">
-        <div class="sigil">✦</div>
+        <div class="sigil">✹</div>
         <div>
           <small>CALAVERA DE CEMPASÚCHIL</small>
           <strong id="tracking-state">Buscando rostro…</strong>
@@ -69,6 +94,6 @@
     </section>
   </main>
 
-  <script type="module" src="./js/app.js?v=6"></script>
+  <script type="module" src="./js/app.js?v=7"></script>
 </body>
 </html>
