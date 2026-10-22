@@ -11,6 +11,23 @@ let processingFace = false;
 let lastFaceProcess = 0;
 let audioCtx = null;
 
+const backgroundMusic = new Audio("./assets/audio/musicafondo.mp3");
+backgroundMusic.loop = true;
+backgroundMusic.preload = "auto";
+backgroundMusic.volume = 0.16;
+
+const blinkAudio = new Audio("./assets/audio/ojos-calavera.mp3");
+blinkAudio.preload = "auto";
+blinkAudio.volume = 0.82;
+
+function playBlinkFile() {
+  try {
+    blinkAudio.pause();
+    blinkAudio.currentTime = 0;
+    blinkAudio.play().catch(() => {});
+  } catch {}
+}
+
 let petalBurstRequested = false;
 let petalGroup = null;
 const activePetals = [];
@@ -135,6 +152,9 @@ function playMouthSound() {
 }
 
 function playBlinkSound() {
+  playBlinkFile();
+  return;
+
   // Fallback sintetizado si el archivo no está disponible.
   // Flash energético corto, más limpio que un beep simple.
   tone(760, 0.055, "sine", 0.022, 1280);
@@ -628,7 +648,13 @@ async function startAR() {
 
   ensureAudio();
 
-    $("intro").classList.add("hidden");
+  backgroundMusic.load();
+  blinkAudio.load();
+
+  backgroundMusic.currentTime = 0;
+  backgroundMusic.play().catch(() => {});
+
+  $("intro").classList.add("hidden");
   $("ar-shell").classList.remove("hidden");
 
   mindarThree = new MindARThree({
