@@ -11,6 +11,10 @@ let processingFace = false;
 let lastFaceProcess = 0;
 let audioCtx = null;
 
+let petalBurstRequested = false;
+let petalGroup = null;
+const activePetals = [];
+
 const gestureState = {
   mouth: false,
   blink: false,
@@ -452,12 +456,12 @@ function animateMouth(active) {
 
   if (active) {
     playMouthSound();
-    $("mouth-state").textContent = "Boca abierta";
+    $("mouth-state").textContent = "Lluvia de pétalos";
+    petalBurstRequested = true;
   } else {
     $("mouth-state").textContent = "Boca";
   }
 }
-
 function animateBlink(active) {
   if (gestureState.blink === active) return;
   gestureState.blink = active;
@@ -492,6 +496,77 @@ function evaluateGestures(landmarks) {
 
   animateMouth(mouthRatio > 0.18);
   animateBlink(leftEyeRatio < 0.17 && rightEyeRatio < 0.17);
+}
+
+function createPetalMesh() {
+  const geometry = new THREE.CircleGeometry(0.018, 16);
+  const material = new THREE.MeshStandardMaterial({
+    color: Math.random() > 0.5 ? 0xff8d1f : 0xffbd35,
+    emissive: 0x5a2208,
+    emissiveIntensity: 0.18,
+    roughness: 0.72,
+    transparent: true,
+    opacity: 1,
+    side: THREE.DoubleSide
+  });
+
+  const petal = new THREE.Mesh(geometry, material);
+  petal.scale.set(0.9, 1.5, 1);
+  return petal;
+}
+
+function triggerPetalBurst() {
+  if (!petalGroup) return;
+
+  for (let i = 0; i < 28; i++) {
+    const petal = createPetalMesh();
+
+    petal.position.set(
+      (Math.random() - 0.5) * 0.48,
+      0.02 + Math.random() * 0.12,
+      0.16 + Math.random() * 0.06
+    );
+
+    petal.rotation.z = Math.random() * Math.PI * 2;
+    petal.rotation.x = (Math.random() - 0.5) * 0.5;
+
+    petal.userData = {
+      vx: (Math.random() - 0.5) * 0.012,
+      vy: 0.008 + Math.random() * 0.014,
+      vz: -0.002 - Math.random() * 0.002,
+      spin: (Math.random() - 0.5) * 0.18,
+      life: 1
+    };
+
+    petalGroup.add(petal);
+    activePetals.push(petal);
+  }
+}
+
+function updatePetals() {
+  for (let i = activePetals.length - 1; i >= 0; i--) {
+    const petal = activePetals[i];
+    const d = petal.userData;
+
+    petal.position.x += d.vx;
+    petal.position.y += d.vy;
+    petal.position.z += d.vz;
+
+    d.vy -= 0.00055;
+
+    petal.rotation.z += d.spin;
+    petal.rotation.x += d.spin * 0.35;
+
+    d.life -= 0.016;
+    petal.material.opacity = Math.max(d.life, 0);
+
+    if (d.life <= 0 || petal.position.y < -0.65) {
+      petalGroup.remove(petal);
+      petal.geometry.dispose();
+      petal.material.dispose();
+      activePetals.splice(i, 1);
+    }
+  }
 }
 
 function initGestureDetection() {
@@ -620,16 +695,16 @@ async function startAR() {
   flowerGroup.add(flowerCenter);
   foreheadAnchor.group.add(flowerGroup);
 
+  petalGroup = new THREE.Group();
+  scene.add(petalGroup);
+
   await mindarThree.start();
 
   renderer.setAnimationLoop((time) => {
     if (faceMeshAR) {
       const mat = faceMeshAR.material;
 
-      if (gestureState.mouth) {
-        mat.emissive.setHex(0x7a2d0c);
-        mat.emissiveIntensity = 0.50;
-      } else if (gestureState.blink) {
+      if (gestureState.blink) {
         mat.emissive.setHex(0xb35a12);
         mat.emissiveIntensity = 0.66;
       } else {
@@ -637,6 +712,13 @@ async function startAR() {
         mat.emissiveIntensity = 0.10;
       }
     }
+
+    if (petalBurstRequested) {
+      triggerPetalBurst();
+      petalBurstRequested = false;
+    }
+
+    updatePetals();
 
     renderer.render(scene, camera);
   });
