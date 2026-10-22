@@ -18,6 +18,8 @@ const gestureState = {
   tracking: false
 };
 
+let selectedMask = "floral";
+
 function ensureAudio() {
   if (!audioCtx) {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -163,7 +165,7 @@ function dist2D(a, b) {
   return Math.hypot(dx, dy);
 }
 
-function buildMaskTexture() {
+function buildMaskTextureFloral() {
   const canvas = document.createElement("canvas");
   canvas.width = 1024;
   canvas.height = 1024;
@@ -295,6 +297,148 @@ function buildMaskTexture() {
   texture.needsUpdate = true;
   return texture;
 }
+function buildMaskTextureRitual() {
+  const canvas = document.createElement("canvas");
+  canvas.width = 1024;
+  canvas.height = 1024;
+
+  const ctx = canvas.getContext("2d");
+  ctx.clearRect(0, 0, 1024, 1024);
+
+  // Base hueso más fría y sobria.
+  const base = ctx.createRadialGradient(512, 470, 120, 512, 520, 610);
+  base.addColorStop(0, "rgba(238,231,213,0.98)");
+  base.addColorStop(0.70, "rgba(211,200,177,0.97)");
+  base.addColorStop(1, "rgba(151,139,121,0.94)");
+  ctx.fillStyle = base;
+  ctx.fillRect(0, 0, 1024, 1024);
+
+  // Sombras laterales.
+  const edge = ctx.createRadialGradient(512, 500, 280, 512, 520, 640);
+  edge.addColorStop(0, "rgba(0,0,0,0)");
+  edge.addColorStop(0.72, "rgba(20,15,12,0.05)");
+  edge.addColorStop(1, "rgba(12,9,8,0.34)");
+  ctx.fillStyle = edge;
+  ctx.fillRect(0, 0, 1024, 1024);
+
+  // Ojos más duros y geométricos.
+  ctx.fillStyle = "rgba(14,14,15,0.98)";
+  ctx.beginPath();
+  ctx.ellipse(350, 445, 132, 84, -0.12, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(674, 445, 132, 84, 0.12, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Aros rituales naranjas/rojos.
+  ctx.strokeStyle = "rgba(224,92,25,1)";
+  ctx.lineWidth = 34;
+  ctx.beginPath();
+  ctx.ellipse(350, 445, 134, 86, -0.12, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.ellipse(674, 445, 134, 86, 0.12, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Recortes de ojos.
+  ctx.save();
+  ctx.globalCompositeOperation = "destination-out";
+  ctx.beginPath();
+  ctx.ellipse(350, 445, 92, 50, -0.12, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(674, 445, 92, 50, 0.12, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // Nariz negra.
+  ctx.fillStyle = "rgba(18,17,17,0.98)";
+  ctx.beginPath();
+  ctx.moveTo(512, 545);
+  ctx.quadraticCurveTo(468, 595, 489, 651);
+  ctx.lineTo(512, 626);
+  ctx.lineTo(535, 651);
+  ctx.quadraticCurveTo(556, 595, 512, 545);
+  ctx.closePath();
+  ctx.fill();
+
+  // Frente con símbolo fuerte.
+  ctx.strokeStyle = "rgba(55,47,39,0.96)";
+  ctx.lineWidth = 14;
+  ctx.beginPath();
+  ctx.moveTo(512, 215);
+  ctx.lineTo(445, 315);
+  ctx.lineTo(512, 350);
+  ctx.lineTo(579, 315);
+  ctx.closePath();
+  ctx.stroke();
+
+  ctx.fillStyle = "rgba(223,89,27,0.98)";
+  ctx.beginPath();
+  ctx.arc(512, 286, 29, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Marcas laterales más masculinas/neutras.
+  ctx.strokeStyle = "rgba(48,41,36,0.92)";
+  ctx.lineWidth = 13;
+  [[220,575,330,625],[804,575,694,625],[250,660,365,700],[774,660,659,700]].forEach(([x1,y1,x2,y2])=>{
+    ctx.beginPath();
+    ctx.moveTo(x1,y1);
+    ctx.lineTo(x2,y2);
+    ctx.stroke();
+  });
+
+  // Boca más sobria.
+  ctx.strokeStyle = "rgba(29,27,26,0.98)";
+  ctx.lineWidth = 14;
+  ctx.beginPath();
+  ctx.moveTo(340, 748);
+  ctx.quadraticCurveTo(512, 805, 684, 748);
+  ctx.stroke();
+
+  ctx.lineWidth = 10;
+  [390,430,470,512,554,594,634].forEach((x)=>{
+    ctx.beginPath();
+    ctx.moveTo(x, 735);
+    ctx.lineTo(x, 810);
+    ctx.stroke();
+  });
+
+  // Grietas naranja/fuego.
+  ctx.strokeStyle = "rgba(236,104,28,0.78)";
+  ctx.lineWidth = 8;
+  [
+    [300,305,345,360],
+    [724,305,679,360],
+    [285,720,340,760],
+    [739,720,684,760]
+  ].forEach(([x1,y1,x2,y2])=>{
+    ctx.beginPath();
+    ctx.moveTo(x1,y1);
+    ctx.lineTo(x2,y2);
+    ctx.stroke();
+  });
+
+  // Brillo más seco que la floral.
+  const gloss = ctx.createLinearGradient(0, 120, 0, 880);
+  gloss.addColorStop(0, "rgba(255,255,255,0.15)");
+  gloss.addColorStop(0.5, "rgba(255,255,255,0.025)");
+  gloss.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = gloss;
+  ctx.fillRect(100, 120, 824, 760);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.needsUpdate = true;
+  return texture;
+}
+
+function buildMaskTexture() {
+  return selectedMask === "ritual"
+    ? buildMaskTextureRitual()
+    : buildMaskTextureFloral();
+}
+
 function setTracking(active) {
   if (gestureState.tracking === active) return;
   gestureState.tracking = active;
@@ -526,5 +670,15 @@ async function startAR() {
 
   startGestureLoop();
 }
+
+document.querySelectorAll(".mask-option").forEach((button) => {
+  button.addEventListener("click", () => {
+    selectedMask = button.dataset.mask || "floral";
+
+    document.querySelectorAll(".mask-option").forEach((item) => {
+      item.classList.toggle("active", item === button);
+    });
+  });
+});
 
 $("start-camera").addEventListener("click", startAR);
