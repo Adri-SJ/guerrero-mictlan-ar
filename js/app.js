@@ -519,7 +519,7 @@ function evaluateGestures(landmarks) {
 }
 
 function createPetalMesh() {
-  const geometry = new THREE.CircleGeometry(0.018, 16);
+  const geometry = new THREE.CircleGeometry(0.024, 16);
   const material = new THREE.MeshStandardMaterial({
     color: Math.random() > 0.5 ? 0xff8d1f : 0xffbd35,
     emissive: 0x5a2208,
@@ -527,33 +527,36 @@ function createPetalMesh() {
     roughness: 0.72,
     transparent: true,
     opacity: 1,
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    depthWrite: false,
+    depthTest: false
   });
 
   const petal = new THREE.Mesh(geometry, material);
-  petal.scale.set(0.9, 1.5, 1);
+  petal.renderOrder = 20;
+  petal.scale.set(0.95, 1.6, 1);
   return petal;
 }
 
 function triggerPetalBurst() {
   if (!petalGroup) return;
 
-  for (let i = 0; i < 28; i++) {
+  for (let i = 0; i < 40; i++) {
     const petal = createPetalMesh();
 
     petal.position.set(
-      (Math.random() - 0.5) * 0.48,
-      0.02 + Math.random() * 0.12,
-      0.16 + Math.random() * 0.06
+      (Math.random() - 0.5) * 0.42,
+      -0.02 + Math.random() * 0.10,
+      0.035 + Math.random() * 0.025
     );
 
     petal.rotation.z = Math.random() * Math.PI * 2;
     petal.rotation.x = (Math.random() - 0.5) * 0.5;
 
     petal.userData = {
-      vx: (Math.random() - 0.5) * 0.012,
-      vy: 0.008 + Math.random() * 0.014,
-      vz: -0.002 - Math.random() * 0.002,
+      vx: (Math.random() - 0.5) * 0.010,
+      vy: 0.010 + Math.random() * 0.012,
+      vz: (Math.random() - 0.5) * 0.0015,
       spin: (Math.random() - 0.5) * 0.18,
       life: 1
     };
@@ -572,7 +575,7 @@ function updatePetals() {
     petal.position.y += d.vy;
     petal.position.z += d.vz;
 
-    d.vy -= 0.00055;
+    d.vy -= 0.00048;
 
     petal.rotation.z += d.spin;
     petal.rotation.x += d.spin * 0.35;
@@ -721,8 +724,10 @@ async function startAR() {
   flowerGroup.add(flowerCenter);
   foreheadAnchor.group.add(flowerGroup);
 
+  const petalAnchor = mindarThree.addAnchor(13);
   petalGroup = new THREE.Group();
-  scene.add(petalGroup);
+  petalGroup.position.set(0, -0.03, 0.08);
+  petalAnchor.group.add(petalGroup);
 
   await mindarThree.start();
 
