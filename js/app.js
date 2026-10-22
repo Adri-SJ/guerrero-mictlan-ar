@@ -211,10 +211,10 @@ function buildMaskTextureFloral() {
 
   ctx.fillStyle = "rgba(20,18,18,0.96)";
   ctx.beginPath();
-  ctx.ellipse(350, 445, 128, 83, -0.10, 0, Math.PI * 2);
+  ctx.ellipse(350, 421, 128, 83, -0.10, 0, Math.PI * 2);
   ctx.fill();
   ctx.beginPath();
-  ctx.ellipse(674, 445, 128, 83, 0.10, 0, Math.PI * 2);
+  ctx.ellipse(674, 421, 128, 83, 0.10, 0, Math.PI * 2);
   ctx.fill();
 
   function flowerEye(cx, cy, rotation = 0) {
@@ -238,16 +238,16 @@ function buildMaskTextureFloral() {
     ctx.restore();
   }
 
-  flowerEye(350, 445, -0.10);
-  flowerEye(674, 445, 0.10);
+  flowerEye(350, 421, -0.10);
+  flowerEye(674, 421, 0.10);
 
   ctx.save();
   ctx.globalCompositeOperation = "destination-out";
   ctx.beginPath();
-  ctx.ellipse(350, 445, 92, 50, -0.10, 0, Math.PI * 2);
+  ctx.ellipse(350, 421, 92, 50, -0.10, 0, Math.PI * 2);
   ctx.fill();
   ctx.beginPath();
-  ctx.ellipse(674, 445, 92, 50, 0.10, 0, Math.PI * 2);
+  ctx.ellipse(674, 421, 92, 50, 0.10, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 
@@ -347,30 +347,30 @@ function buildMaskTextureRitual() {
   // Ojos más duros y geométricos.
   ctx.fillStyle = "rgba(14,14,15,0.98)";
   ctx.beginPath();
-  ctx.ellipse(350, 445, 132, 84, -0.12, 0, Math.PI * 2);
+  ctx.ellipse(350, 421, 132, 84, -0.12, 0, Math.PI * 2);
   ctx.fill();
   ctx.beginPath();
-  ctx.ellipse(674, 445, 132, 84, 0.12, 0, Math.PI * 2);
+  ctx.ellipse(674, 421, 132, 84, 0.12, 0, Math.PI * 2);
   ctx.fill();
 
   // Aros rituales naranjas/rojos.
   ctx.strokeStyle = "rgba(224,92,25,1)";
   ctx.lineWidth = 34;
   ctx.beginPath();
-  ctx.ellipse(350, 445, 134, 86, -0.12, 0, Math.PI * 2);
+  ctx.ellipse(350, 421, 134, 86, -0.12, 0, Math.PI * 2);
   ctx.stroke();
   ctx.beginPath();
-  ctx.ellipse(674, 445, 134, 86, 0.12, 0, Math.PI * 2);
+  ctx.ellipse(674, 421, 134, 86, 0.12, 0, Math.PI * 2);
   ctx.stroke();
 
   // Recortes de ojos.
   ctx.save();
   ctx.globalCompositeOperation = "destination-out";
   ctx.beginPath();
-  ctx.ellipse(350, 445, 92, 50, -0.12, 0, Math.PI * 2);
+  ctx.ellipse(350, 421, 92, 50, -0.12, 0, Math.PI * 2);
   ctx.fill();
   ctx.beginPath();
-  ctx.ellipse(674, 445, 92, 50, 0.12, 0, Math.PI * 2);
+  ctx.ellipse(674, 421, 92, 50, 0.12, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 
