@@ -171,9 +171,9 @@ function buildMaskTexture() {
   ctx.clearRect(0, 0, 1024, 1024);
 
   const base = ctx.createRadialGradient(512, 470, 120, 512, 520, 600);
-  base.addColorStop(0, "rgba(244,236,214,0.96)");
-  base.addColorStop(0.68, "rgba(229,216,190,0.94)");
-  base.addColorStop(1, "rgba(181,163,137,0.86)");
+  base.addColorStop(0, "rgba(255,250,235,0.98)");
+  base.addColorStop(0.68, "rgba(246,232,200,0.97)");
+  base.addColorStop(1, "rgba(205,181,141,0.91)");
   ctx.fillStyle = base;
   ctx.fillRect(0, 0, 1024, 1024);
 
@@ -199,13 +199,13 @@ function buildMaskTexture() {
     for (let i = 0; i < 12; i++) {
       ctx.save();
       ctx.rotate((Math.PI * 2 * i) / 12);
-      ctx.fillStyle = i % 2 === 0 ? "rgba(236,121,24,0.98)" : "rgba(246,158,35,0.98)";
+      ctx.fillStyle = i % 2 === 0 ? "rgba(255,116,20,1)" : "rgba(255,184,38,1)";
       ctx.beginPath();
       ctx.ellipse(0, -112, 26, 56, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     }
-    ctx.strokeStyle = "rgba(144,42,31,0.96)";
+    ctx.strokeStyle = "rgba(183,39,37,1)";
     ctx.lineWidth = 22;
     ctx.beginPath();
     ctx.ellipse(0, 0, 128, 82, 0, 0, Math.PI * 2);
@@ -254,14 +254,14 @@ function buildMaskTexture() {
   ctx.quadraticCurveTo(547, 290, 512, 242);
   ctx.fill();
 
-  ctx.fillStyle = "rgba(67,126,82,0.92)";
+  ctx.fillStyle = "rgba(67,166,92,0.98)";
   [[420,340],[604,340],[270,610],[754,610]].forEach(([x,y])=>{
     ctx.beginPath();
     ctx.ellipse(x,y,15,34,0.6,0,Math.PI*2);
     ctx.fill();
   });
 
-  ctx.fillStyle = "rgba(205,76,116,0.92)";
+  ctx.fillStyle = "rgba(234,64,130,0.98)";
   [[455,365],[569,365],[315,665],[709,665]].forEach(([x,y])=>{
     ctx.beginPath();
     ctx.arc(x,y,15,0,Math.PI*2);
@@ -284,8 +284,8 @@ function buildMaskTexture() {
   });
 
   const gloss = ctx.createLinearGradient(0, 120, 0, 880);
-  gloss.addColorStop(0, "rgba(255,255,255,0.12)");
-  gloss.addColorStop(0.5, "rgba(255,255,255,0.02)");
+  gloss.addColorStop(0, "rgba(255,255,255,0.24)");
+  gloss.addColorStop(0.45, "rgba(255,255,255,0.05)");
   gloss.addColorStop(1, "rgba(255,255,255,0)");
   ctx.fillStyle = gloss;
   ctx.fillRect(100, 120, 824, 760);
@@ -452,8 +452,8 @@ async function startAR() {
     map: buildMaskTexture(),
     transparent: true,
     opacity: 0.93,
-    roughness: 0.42,
-    metalness: 0.3,
+    roughness: 0.25,
+    metalness: 0.08,
     side: THREE.DoubleSide,
     emissive: new THREE.Color(0x170606),
     emissiveIntensity: 0.18,
