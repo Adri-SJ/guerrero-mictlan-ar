@@ -11,38 +11,6 @@ let processingFace = false;
 let lastFaceProcess = 0;
 let audioCtx = null;
 
-const gestureAudio = {
-  mouth: new Audio("./assets/audio/boca.mp3"),
-  blink: new Audio("./assets/audio/ojos.mp3"),
-  brow: new Audio("./assets/audio/cejas.mp3")
-};
-
-gestureAudio.mouth.preload = "auto";
-gestureAudio.blink.preload = "auto";
-gestureAudio.brow.preload = "auto";
-
-gestureAudio.mouth.volume = 0.78;
-gestureAudio.blink.volume = 0.72;
-gestureAudio.brow.volume = 0.76;
-
-gestureAudio.mouth.playbackRate = 1.08;
-gestureAudio.blink.playbackRate = 1.0;
-gestureAudio.brow.playbackRate = 1.0;
-
-function playGestureAudio(name) {
-  const audio = gestureAudio[name];
-  if (!audio) return false;
-
-  try {
-    audio.pause();
-    audio.currentTime = 0;
-    audio.play().catch(() => {});
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 const gestureState = {
   mouth: false,
   blink: false,
@@ -138,8 +106,6 @@ function noiseBurst({
 }
 
 function playMouthSound() {
-  if (playGestureAudio("mouth")) return;
-
   // Fallback sintetizado si el archivo no está disponible.
   // Golpe mecánico + resonancia grave, como una máscara de metal abriéndose.
   noiseBurst({
@@ -164,8 +130,6 @@ function playMouthSound() {
 }
 
 function playBlinkSound() {
-  if (playGestureAudio("blink")) return;
-
   // Fallback sintetizado si el archivo no está disponible.
   // Flash energético corto, más limpio que un beep simple.
   tone(760, 0.055, "sine", 0.022, 1280);
@@ -180,8 +144,6 @@ function playBlinkSound() {
 }
 
 function playBrowSound() {
-  if (playGestureAudio("brow")) return;
-
   // Fallback sintetizado si el archivo no está disponible.
   // Whoosh ascendente + brillo ceremonial.
   noiseBurst({
@@ -209,24 +171,17 @@ function buildMaskTexture() {
   const ctx = canvas.getContext("2d");
   ctx.clearRect(0, 0, 1024, 1024);
 
-  // Base: laca negra/rojo vino, más uniforme para que se lea como UNA máscara.
+  // MISMA distribución UV que ya funciona en Samurai.
+  // Solo cambia la estética a Guerrero del Mictlán.
   const base = ctx.createRadialGradient(512, 470, 90, 512, 520, 570);
-  base.addColorStop(0, "rgba(92,18,16,0.88)");
-  base.addColorStop(0.48, "rgba(51,10,11,0.90)");
-  base.addColorStop(1, "rgba(12,10,10,0.94)");
+  base.addColorStop(0, "rgba(78,20,15,0.90)");
+  base.addColorStop(0.48, "rgba(35,8,9,0.92)");
+  base.addColorStop(1, "rgba(7,7,8,0.96)");
   ctx.fillStyle = base;
   ctx.fillRect(0, 0, 1024, 1024);
 
-  // Sombra perimetral para dar volumen sin usar geometría pesada.
-  const edge = ctx.createRadialGradient(512, 500, 250, 512, 520, 590);
-  edge.addColorStop(0, "rgba(0,0,0,0)");
-  edge.addColorStop(0.72, "rgba(0,0,0,0.10)");
-  edge.addColorStop(1, "rgba(0,0,0,0.68)");
-  ctx.fillStyle = edge;
-  ctx.fillRect(0, 0, 1024, 1024);
-
-  // Frente tipo kabuto / ceja superior continua.
-  ctx.fillStyle = "rgba(12,12,13,0.96)";
+  // Frente oscura.
+  ctx.fillStyle = "rgba(7,7,8,0.97)";
   ctx.beginPath();
   ctx.moveTo(170, 245);
   ctx.quadraticCurveTo(340, 175, 512, 235);
@@ -237,8 +192,8 @@ function buildMaskTexture() {
   ctx.closePath();
   ctx.fill();
 
-  // Lamas rojas bajo la frente.
-  ctx.strokeStyle = "rgba(139,32,27,0.95)";
+  // Detalles rojo profundo.
+  ctx.strokeStyle = "rgba(140,35,24,0.96)";
   ctx.lineWidth = 18;
   ctx.beginPath();
   ctx.moveTo(205, 340);
@@ -250,8 +205,8 @@ function buildMaskTexture() {
   ctx.quadraticCurveTo(664, 300, 554, 342);
   ctx.stroke();
 
-  // Nariz / puente central tipo menpō.
-  ctx.fillStyle = "rgba(20,20,21,0.98)";
+  // Centro/nariz.
+  ctx.fillStyle = "rgba(14,14,15,0.98)";
   ctx.beginPath();
   ctx.moveTo(512, 355);
   ctx.lineTo(578, 535);
@@ -260,8 +215,8 @@ function buildMaskTexture() {
   ctx.closePath();
   ctx.fill();
 
-  // Pómulos curvos.
-  ctx.fillStyle = "rgba(43,12,13,0.97)";
+  // Pómulos.
+  ctx.fillStyle = "rgba(50,12,11,0.97)";
   ctx.beginPath();
   ctx.moveTo(165, 500);
   ctx.quadraticCurveTo(280, 455, 435, 520);
@@ -278,8 +233,8 @@ function buildMaskTexture() {
   ctx.closePath();
   ctx.fill();
 
-  // Mandíbula amplia y unificada.
-  ctx.fillStyle = "rgba(13,13,14,0.98)";
+  // Mandíbula.
+  ctx.fillStyle = "rgba(8,8,9,0.98)";
   ctx.beginPath();
   ctx.moveTo(230, 680);
   ctx.quadraticCurveTo(340, 755, 512, 742);
@@ -290,8 +245,8 @@ function buildMaskTexture() {
   ctx.closePath();
   ctx.fill();
 
-  // "Boca" estilizada del menpō.
-  ctx.fillStyle = "rgba(118,28,24,0.95)";
+  // Boca.
+  ctx.fillStyle = "rgba(126,30,21,0.96)";
   ctx.beginPath();
   ctx.moveTo(365, 760);
   ctx.quadraticCurveTo(512, 815, 659, 760);
@@ -300,40 +255,14 @@ function buildMaskTexture() {
   ctx.closePath();
   ctx.fill();
 
-  // Colmillos / dientes.
-  ctx.fillStyle = "rgba(219,204,167,0.96)";
-  [[415, 787],[470, 803],[554, 803],[609, 787]].forEach(([x,y], i) => {
-    ctx.beginPath();
-    const dir = (i < 2) ? 1 : -1;
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + 20 * dir, y + 56);
-    ctx.lineTo(x - 17 * dir, y + 12);
-    ctx.closePath();
-    ctx.fill();
-  });
-
-  // Filetes dorados laterales.
-  ctx.strokeStyle = "rgba(202,162,83,0.95)";
-  ctx.lineWidth = 12;
-
-  ctx.beginPath();
-  ctx.moveTo(188, 475);
-  ctx.quadraticCurveTo(155, 590, 190, 705);
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.moveTo(836, 475);
-  ctx.quadraticCurveTo(869, 590, 834, 705);
-  ctx.stroke();
-
-  // Emblema frontal.
-  ctx.strokeStyle = "rgba(205,166,88,0.98)";
-  ctx.lineWidth = 24;
+  // Símbolo frontal dorado.
+  ctx.strokeStyle = "rgba(194,151,66,0.98)";
+  ctx.lineWidth = 22;
   ctx.beginPath();
   ctx.arc(512, 235, 64, 0, Math.PI * 2);
   ctx.stroke();
 
-  ctx.fillStyle = "rgba(205,166,88,0.98)";
+  ctx.fillStyle = "rgba(194,151,66,0.98)";
   ctx.beginPath();
   ctx.moveTo(512, 120);
   ctx.lineTo(452, 240);
@@ -341,22 +270,7 @@ function buildMaskTexture() {
   ctx.closePath();
   ctx.fill();
 
-  // Marcas diagonales tipo armadura.
-  ctx.strokeStyle = "rgba(176,49,39,0.55)";
-  ctx.lineWidth = 9;
-  [
-    [235, 575, 330, 540],
-    [250, 620, 345, 585],
-    [789, 575, 694, 540],
-    [774, 620, 679, 585]
-  ].forEach(([x1, y1, x2, y2]) => {
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
-  });
-
-  // OJOS: perforaciones reales para que se vean los ojos del usuario.
+  // OJOS y boca recortados exactamente como en la versión Samurai funcional.
   ctx.save();
   ctx.globalCompositeOperation = "destination-out";
 
@@ -368,15 +282,14 @@ function buildMaskTexture() {
   ctx.ellipse(674, 445, 118, 66, 0.12, 0, Math.PI * 2);
   ctx.fill();
 
-  // Pequeña abertura central de boca para que la animación sea más natural.
   ctx.beginPath();
   ctx.ellipse(512, 786, 118, 28, 0, 0, Math.PI * 2);
   ctx.fill();
 
   ctx.restore();
 
-  // Bordes rojos alrededor de los ojos después del recorte.
-  ctx.strokeStyle = "rgba(187,43,34,0.98)";
+  // Bordes rojos de ojos.
+  ctx.strokeStyle = "rgba(177,45,31,0.98)";
   ctx.lineWidth = 28;
 
   ctx.beginPath();
@@ -387,10 +300,10 @@ function buildMaskTexture() {
   ctx.ellipse(674, 445, 128, 76, 0.12, 0, Math.PI * 2);
   ctx.stroke();
 
-  // Highlight sutil para dar acabado lacado.
+  // Acabado obsidiana.
   const gloss = ctx.createLinearGradient(0, 150, 0, 820);
-  gloss.addColorStop(0, "rgba(255,255,255,0.10)");
-  gloss.addColorStop(0.45, "rgba(255,255,255,0.015)");
+  gloss.addColorStop(0, "rgba(255,255,255,0.09)");
+  gloss.addColorStop(0.45, "rgba(255,255,255,0.012)");
   gloss.addColorStop(1, "rgba(255,255,255,0)");
   ctx.fillStyle = gloss;
   ctx.fillRect(120, 130, 784, 760);
@@ -535,11 +448,7 @@ async function startAR() {
 
   ensureAudio();
 
-  Object.values(gestureAudio).forEach((audio) => {
-    audio.load();
-  });
-
-  $("intro").classList.add("hidden");
+    $("intro").classList.add("hidden");
   $("ar-shell").classList.remove("hidden");
 
   mindarThree = new MindARThree({
@@ -571,103 +480,6 @@ async function startAR() {
 
   scene.add(faceMeshAR);
 
-  // Kabuto simple para completar la silueta samurái.
-  const foreheadAnchor = mindarThree.addAnchor(10);
-
-  const kabutoGroup = new THREE.Group();
-  kabutoGroup.position.set(0, 0.13, 0.01);
-
-  const blackMetal = new THREE.MeshStandardMaterial({
-    color: 0x151515,
-    metalness: 0.82,
-    roughness: 0.28,
-    emissive: 0x100505,
-    emissiveIntensity: 0.10
-  });
-
-  const redLacquer = new THREE.MeshStandardMaterial({
-    color: 0x5a1113,
-    metalness: 0.58,
-    roughness: 0.34,
-    emissive: 0x1c0506,
-    emissiveIntensity: 0.08
-  });
-
-  const goldMetal = new THREE.MeshStandardMaterial({
-    color: 0xc8a35b,
-    metalness: 0.92,
-    roughness: 0.18,
-    emissive: 0x3a2608,
-    emissiveIntensity: 0.32,
-    side: THREE.DoubleSide
-  });
-
-  // Cúpula principal.
-  const dome = new THREE.Mesh(
-    new THREE.SphereGeometry(0.23, 32, 24),
-    blackMetal
-  );
-  dome.scale.set(1.55, 0.92, 1.18);
-  dome.position.set(0, 0.10, -0.09);
-  kabutoGroup.add(dome);
-
-  // Visera frontal.
-  const brim = new THREE.Mesh(
-    new THREE.BoxGeometry(0.70, 0.065, 0.095),
-    redLacquer
-  );
-  brim.position.set(0, -0.02, 0.05);
-  kabutoGroup.add(brim);
-
-  // Protectores laterales.
-  const sideGeometry = new THREE.BoxGeometry(0.11, 0.27, 0.06);
-
-  const sideLeft = new THREE.Mesh(sideGeometry, redLacquer);
-  sideLeft.position.set(-0.31, -0.045, 0.01);
-  sideLeft.rotation.z = 0.24;
-  kabutoGroup.add(sideLeft);
-
-  const sideRight = new THREE.Mesh(sideGeometry, redLacquer);
-  sideRight.position.set(0.31, -0.045, 0.01);
-  sideRight.rotation.z = -0.24;
-  kabutoGroup.add(sideRight);
-
-  // Maedate frontal.
-  const crestRing = new THREE.Mesh(
-    new THREE.RingGeometry(0.045, 0.062, 32),
-    goldMetal
-  );
-  crestRing.position.set(0, 0.12, 0.165);
-  kabutoGroup.add(crestRing);
-
-  const crestShape = new THREE.Shape();
-  crestShape.moveTo(0, 0.085);
-  crestShape.lineTo(-0.042, 0);
-  crestShape.lineTo(0.042, 0);
-  crestShape.closePath();
-
-  const crestTip = new THREE.Mesh(
-    new THREE.ShapeGeometry(crestShape),
-    goldMetal
-  );
-  crestTip.position.set(0, 0.19, 0.166);
-  kabutoGroup.add(crestTip);
-
-  // Cuernos sencillos para dar la silueta típica samurái.
-  const hornGeometry = new THREE.ConeGeometry(0.022, 0.22, 16);
-
-  const hornLeft = new THREE.Mesh(hornGeometry, goldMetal);
-  hornLeft.position.set(-0.15, 0.31, 0.04);
-  hornLeft.rotation.z = 0.48;
-  kabutoGroup.add(hornLeft);
-
-  const hornRight = new THREE.Mesh(hornGeometry, goldMetal);
-  hornRight.position.set(0.15, 0.31, 0.04);
-  hornRight.rotation.z = -0.48;
-  kabutoGroup.add(hornRight);
-
-  foreheadAnchor.group.add(kabutoGroup);
-
   await mindarThree.start();
 
   renderer.setAnimationLoop((time) => {
@@ -687,16 +499,6 @@ async function startAR() {
         mat.emissive.setHex(0x170606);
         mat.emissiveIntensity = 0.18;
       }
-    }
-
-    crestRing.rotation.z += 0.006;
-
-    if (gestureState.brow) {
-      crestRing.scale.lerp(new THREE.Vector3(1.18, 1.18, 1.18), 0.18);
-      crestTip.scale.lerp(new THREE.Vector3(1.18, 1.18, 1.18), 0.18);
-    } else {
-      crestRing.scale.lerp(new THREE.Vector3(1, 1, 1), 0.18);
-      crestTip.scale.lerp(new THREE.Vector3(1, 1, 1), 0.18);
     }
 
     renderer.render(scene, camera);
