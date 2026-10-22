@@ -60,52 +60,19 @@ function dist2D(a,b){ return Math.hypot(a.x-b.x,a.y-b.y); }
 
 function buildMaskTexture(){
   const canvas=document.createElement("canvas");
-  canvas.width=1024; canvas.height=1024;
+  canvas.width=1024;
+  canvas.height=1024;
+
   const ctx=canvas.getContext("2d");
   ctx.clearRect(0,0,1024,1024);
 
-  // Base uniforme: el FaceMesh se encarga de seguir la forma real del rostro.
-  const base=ctx.createRadialGradient(512,470,120,512,520,610);
-  base.addColorStop(0,"rgba(88,24,18,.46)");
-  base.addColorStop(.48,"rgba(38,12,11,.60)");
-  base.addColorStop(1,"rgba(5,5,6,.74)");
-  ctx.fillStyle=base;
-  ctx.fillRect(0,0,1024,1024);
+  // Capa uniforme: si esto está bien, debe cubrir exactamente el FaceMesh.
+  const gradient=ctx.createRadialGradient(512,470,120,512,520,620);
+  gradient.addColorStop(0,"rgba(105,24,18,.72)");
+  gradient.addColorStop(.55,"rgba(48,12,11,.78)");
+  gradient.addColorStop(1,"rgba(8,7,8,.84)");
 
-  // Vetas de obsidiana suaves: decorativas, sin intentar dibujar ojos/nariz en UV.
-  ctx.strokeStyle="rgba(178,48,30,.28)";
-  ctx.lineWidth=8;
-  [
-    [250,210,390,380],
-    [774,210,634,380],
-    [210,565,370,660],
-    [814,565,654,660],
-    [330,790,445,845],
-    [694,790,579,845]
-  ].forEach(([x1,y1,x2,y2])=>{
-    ctx.beginPath();
-    ctx.moveTo(x1,y1);
-    ctx.lineTo(x2,y2);
-    ctx.stroke();
-  });
-
-  // Filetes dorados generales.
-  ctx.strokeStyle="rgba(205,166,88,.34)";
-  ctx.lineWidth=7;
-  ctx.beginPath();
-  ctx.arc(512,330,230,Math.PI*.15,Math.PI*.85);
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.arc(512,680,255,Math.PI*1.12,Math.PI*1.88);
-  ctx.stroke();
-
-  // Acabado tipo piedra pulida.
-  const gloss=ctx.createLinearGradient(0,120,0,900);
-  gloss.addColorStop(0,"rgba(255,255,255,.09)");
-  gloss.addColorStop(.42,"rgba(255,255,255,.012)");
-  gloss.addColorStop(1,"rgba(255,255,255,0)");
-  ctx.fillStyle=gloss;
+  ctx.fillStyle=gradient;
   ctx.fillRect(0,0,1024,1024);
 
   const texture=new THREE.CanvasTexture(canvas);
@@ -176,147 +143,65 @@ function startGestureLoop(){
 
 async function startAR(){
   if(mindarThree) return;
+
   ensureAudio();
+
   $("intro").classList.add("hidden");
   $("ar-shell").classList.remove("hidden");
 
-  mindarThree=new MindARThree({container:$("scene-root")});
+  mindarThree=new MindARThree({
+    container:$("scene-root")
+  });
+
   const {renderer,scene,camera}=mindarThree;
 
-  scene.add(new THREE.HemisphereLight(0xffffff,0x24110a,1.3));
-  const key=new THREE.DirectionalLight(0xffffff,1.0); key.position.set(.5,1,1.4); scene.add(key);
+  scene.add(new THREE.HemisphereLight(0xffffff,0x2a1110,1.35));
 
+  const key=new THREE.DirectionalLight(0xffffff,1.0);
+  key.position.set(.5,1,1.5);
+  scene.add(key);
+
+  // Misma configuración base del proyecto Samurai que ya sabemos que funciona.
   faceMeshAR=mindarThree.addFaceMesh();
+
   faceMeshAR.material=new THREE.MeshStandardMaterial({
-    map:buildMaskTexture(),transparent:true,opacity:.70,roughness:.38,metalness:.42,
-    side:THREE.DoubleSide,emissive:new THREE.Color(0x120302),emissiveIntensity:.14,depthWrite:false
+    map:buildMaskTexture(),
+    transparent:true,
+    opacity:.82,
+    roughness:.42,
+    metalness:.25,
+    side:THREE.DoubleSide,
+    emissive:new THREE.Color(0x160403),
+    emissiveIntensity:.12,
+    depthWrite:false
   });
+
   scene.add(faceMeshAR);
-
-  // Detalles colocados sobre landmarks reales del rostro.
-  const redGlow=new THREE.MeshStandardMaterial({
-    color:0x8d2118,
-    emissive:0x7a130d,
-    emissiveIntensity:.55,
-    metalness:.58,
-    roughness:.28,
-    side:THREE.DoubleSide
-  });
-
-  const goldGlow=new THREE.MeshStandardMaterial({
-    color:0xc49a48,
-    emissive:0x4d2d06,
-    emissiveIntensity:.34,
-    metalness:.86,
-    roughness:.22,
-    side:THREE.DoubleSide
-  });
-
-  // Marcos de ojos: anclados a cada ojo real.
-  const leftEyeAnchor=mindarThree.addAnchor(159);
-  const rightEyeAnchor=mindarThree.addAnchor(386);
-
-  const eyeGeometry=new THREE.RingGeometry(.048,.068,40);
-
-  const leftEyeOrnament=new THREE.Mesh(eyeGeometry,redGlow.clone());
-  leftEyeOrnament.scale.set(1.55,.72,1);
-  leftEyeOrnament.rotation.z=-.12;
-  leftEyeOrnament.position.set(0,0,.06);
-  leftEyeAnchor.group.add(leftEyeOrnament);
-
-  const rightEyeOrnament=new THREE.Mesh(eyeGeometry,redGlow.clone());
-  rightEyeOrnament.scale.set(1.55,.72,1);
-  rightEyeOrnament.rotation.z=.12;
-  rightEyeOrnament.position.set(0,0,.06);
-  rightEyeAnchor.group.add(rightEyeOrnament);
-
-  // Nariz / centro ritual.
-  const noseAnchor=mindarThree.addAnchor(1);
-  const noseShape=new THREE.Shape();
-  noseShape.moveTo(0,.075);
-  noseShape.lineTo(-.055,-.055);
-  noseShape.lineTo(.055,-.055);
-  noseShape.closePath();
-  const nosePiece=new THREE.Mesh(new THREE.ShapeGeometry(noseShape),goldGlow);
-  nosePiece.position.set(0,-.01,.065);
-  noseAnchor.group.add(nosePiece);
-
-  // Boca / mandíbula: pieza separada para poder reaccionar al gesto.
-  const mouthAnchor=mindarThree.addAnchor(13);
-  const mouthGroup=new THREE.Group();
-  mouthGroup.position.set(0,-.075,.055);
-
-  const jawPlate=new THREE.Mesh(
-    new THREE.BoxGeometry(.34,.09,.028),
-    new THREE.MeshStandardMaterial({
-      color:0x101011,
-      metalness:.72,
-      roughness:.3,
-      emissive:0x280604,
-      emissiveIntensity:.18
-    })
-  );
-  mouthGroup.add(jawPlate);
-
-  const mouthLine=new THREE.Mesh(
-    new THREE.BoxGeometry(.21,.018,.018),
-    redGlow.clone()
-  );
-  mouthLine.position.set(0,.022,.022);
-  mouthGroup.add(mouthLine);
-
-  mouthAnchor.group.add(mouthGroup);
-
-  // Corona/penacho oscuro, no interactivo pero da silueta de guerrero.
-  const foreheadAnchor=mindarThree.addAnchor(10);
-  const headdress=new THREE.Group();
-  headdress.position.set(0,.16,.01);
-
-  const stone=new THREE.MeshStandardMaterial({color:0x111214,metalness:.55,roughness:.34});
-  const bronze=new THREE.MeshStandardMaterial({color:0x9b6c2e,metalness:.8,roughness:.24,emissive:0x281300,emissiveIntensity:.18});
-
-  const crown=new THREE.Mesh(new THREE.SphereGeometry(.235,32,20),stone);
-  crown.scale.set(1.35,.74,1.02); crown.position.set(0,.11,-.08); headdress.add(crown);
-
-  const band=new THREE.Mesh(new THREE.BoxGeometry(.62,.055,.08),bronze);
-  band.position.set(0,-.01,.045); headdress.add(band);
-
-  [-.22,0,.22].forEach((x,i)=>{
-    const spike=new THREE.Mesh(new THREE.ConeGeometry(.023,.22,16),bronze);
-    spike.position.set(x,.29+(i===1?.04:0),.03);
-    spike.rotation.z=x<0?.28:x>0?-.28:0;
-    headdress.add(spike);
-  });
-
-  foreheadAnchor.group.add(headdress);
 
   await mindarThree.start();
 
   renderer.setAnimationLoop(()=>{
-    const mat=faceMeshAR.material;
-    if(gestureState.mouth){ mat.emissive.setHex(0x6e1609); mat.emissiveIntensity=.92; }
-    else if(gestureState.blink){ mat.emissive.setHex(0x7a220e); mat.emissiveIntensity=.72; }
-    else if(gestureState.brow){ mat.emissive.setHex(0x6b4a16); mat.emissiveIntensity=.70; }
-    else { mat.emissive.setHex(0x120302); mat.emissiveIntensity=.14; }
+    if(faceMeshAR){
+      const mat=faceMeshAR.material;
 
-    const eyeTarget=gestureState.blink?1.24:1;
-    leftEyeOrnament.scale.lerp(new THREE.Vector3(1.55*eyeTarget,.72*eyeTarget,1),.22);
-    rightEyeOrnament.scale.lerp(new THREE.Vector3(1.55*eyeTarget,.72*eyeTarget,1),.22);
-
-    const jawTargetY=gestureState.mouth?-.13:-.075;
-    mouthGroup.position.y+=(jawTargetY-mouthGroup.position.y)*.24;
-    {
-      const targetRot=gestureState.mouth?.18:0;
-      mouthGroup.rotation.x+=(targetRot-mouthGroup.rotation.x)*.18;
+      if(gestureState.mouth){
+        mat.emissive.setHex(0x671308);
+        mat.emissiveIntensity=.65;
+      }else if(gestureState.blink){
+        mat.emissive.setHex(0x7a1d0c);
+        mat.emissiveIntensity=.72;
+      }else if(gestureState.brow){
+        mat.emissive.setHex(0x735017);
+        mat.emissiveIntensity=.60;
+      }else{
+        mat.emissive.setHex(0x160403);
+        mat.emissiveIntensity=.12;
+      }
     }
-
-    const target=gestureState.brow?1.18:1;
-    headdress.scale.lerp(new THREE.Vector3(target,target,target),.12);
 
     renderer.render(scene,camera);
   });
 
   startGestureLoop();
 }
-
 $("start-camera").addEventListener("click",startAR);
