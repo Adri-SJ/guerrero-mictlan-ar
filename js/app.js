@@ -14,7 +14,6 @@ let audioCtx = null;
 const gestureState = {
   mouth: false,
   blink: false,
-  brow: false,
   tracking: false
 };
 
@@ -471,18 +470,6 @@ function animateBlink(active) {
   }
 }
 
-function animateBrow(active) {
-  if (gestureState.brow === active) return;
-  gestureState.brow = active;
-
-  if (active) {
-    playBrowSound();
-    $("brow-state").textContent = "Cejas arriba";
-  } else {
-    $("brow-state").textContent = "Cejas";
-  }
-}
-
 function evaluateGestures(landmarks) {
   if (!landmarks || landmarks.length < 468) {
     setTracking(false);
@@ -503,16 +490,8 @@ function evaluateGestures(landmarks) {
   const leftEyeRatio = leftEyeWidth > 0 ? leftEyeOpen / leftEyeWidth : 1;
   const rightEyeRatio = rightEyeWidth > 0 ? rightEyeOpen / rightEyeWidth : 1;
 
-  const leftBrowGap = dist2D(landmarks[105], landmarks[159]);
-  const rightBrowGap = dist2D(landmarks[334], landmarks[386]);
-
-  const leftBrowRatio = leftEyeWidth > 0 ? leftBrowGap / leftEyeWidth : 0;
-  const rightBrowRatio = rightEyeWidth > 0 ? rightBrowGap / rightEyeWidth : 0;
-  const browRatio = (leftBrowRatio + rightBrowRatio) / 2;
-
   animateMouth(mouthRatio > 0.18);
   animateBlink(leftEyeRatio < 0.17 && rightEyeRatio < 0.17);
-  animateBrow(browRatio > 0.72);
 }
 
 function initGestureDetection() {
@@ -653,17 +632,11 @@ async function startAR() {
       } else if (gestureState.blink) {
         mat.emissive.setHex(0xb35a12);
         mat.emissiveIntensity = 0.66;
-      } else if (gestureState.brow) {
-        mat.emissive.setHex(0x7d4f14);
-        mat.emissiveIntensity = 0.54;
       } else {
         mat.emissive.setHex(0x24170d);
         mat.emissiveIntensity = 0.10;
       }
     }
-
-    const flowerTarget = gestureState.brow ? 1.22 : 1;
-    flowerGroup.scale.lerp(new THREE.Vector3(flowerTarget, flowerTarget, flowerTarget), 0.14);
 
     renderer.render(scene, camera);
   });
