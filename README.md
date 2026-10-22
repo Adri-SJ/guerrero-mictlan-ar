@@ -1,10 +1,10 @@
-# Guerrero del Mictlán AR
+# Calavera de Cempasúchil AR
 
-Filtro facial de Realidad Aumentada inspirado en Día de Muertos y una estética de guerrero del inframundo.
+Filtro facial de Realidad Aumentada inspirado en el maquillaje tradicional de Día de Muertos y el cempasúchil.
 
 ## Concepto
 
-La experiencia transforma el rostro del usuario mediante una máscara completa con acabado oscuro/obsidiana, detalles rojos y dorados, más una corona superior tipo guerrero.
+La experiencia transforma el rostro del usuario con una calavera clara, ojos florales de cempasúchil, nariz de calavera, dientes decorativos y ornamentos de color.
 
 ## Interacciones
 
